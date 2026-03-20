@@ -6,15 +6,16 @@ use App\Http\Controllers\StallController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return redirect()->route('login'); // Langsung lempar ke login
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard'); // Pastikan kamu punya view dashboard atau arahkan ke produk
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+    
 // Route khusus sistem yang wajib login
 Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
