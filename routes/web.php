@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StallController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return redirect()->route('login'); // Langsung lempar ke login
@@ -25,7 +26,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos/{stall}', [PosController::class, 'create'])->name('pos.create');
     Route::post('/pos/{stall}', [PosController::class, 'store'])->name('pos.store');
     // Route Kelola Keuangan
-    Route::resource('finances', FinanceController::class)->except(['show']);   
+    Route::resource('finances', FinanceController::class)->except(['show']);
+    // Route Laporan
+    Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
 
     // Route profile bawaan breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

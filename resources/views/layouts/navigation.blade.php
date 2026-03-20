@@ -36,6 +36,9 @@
         <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
             <span class="font-medium">Kelola Keuangan</span>
         </a>
+        <a href="{{ route('reports.sales') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.sales') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+            <span class="font-medium">Laporan Penjualan</span>
+        </a>
     </nav>
 
     <div class="p-4 bg-red-800 border-t border-red-600">

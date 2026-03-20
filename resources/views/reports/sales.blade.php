@@ -1,0 +1,120 @@
+<x-app-layout>
+    <x-slot name="header">Laporan Penjualan</x-slot>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <form action="{{ route('reports.sales') }}" method="GET" class="flex flex-col sm:flex-row items-end gap-4">
+            <div class="w-full sm:w-auto flex-1">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Dari Tanggal</label>
+                <input type="date" name="start_date" value="{{ $startDate }}" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring-red-500">
+            </div>
+            <div class="w-full sm:w-auto flex-1">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Sampai Tanggal</label>
+                <input type="date" name="end_date" value="{{ $endDate }}" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring-red-500">
+            </div>
+            <div class="w-full sm:w-auto">
+                <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-md transition-colors h-[42px] flex items-center justify-center">
+                    Tampilkan Data
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-500">Total Pendapatan Penjualan</p>
+                <h3 class="text-2xl font-black text-red-700">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center">
+            <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-500">Total Transaksi Kasir</p>
+                <h3 class="text-2xl font-black text-gray-800">{{ $totalTransaksi }} <span class="text-sm font-medium text-gray-500">Nota</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Rincian Produk Terjual</h3>
+            
+            @if(count($rekapProduk) > 0)
+                <div class="space-y-4">
+                    @php 
+                        $maxQty = $rekapProduk->max('qty'); 
+                    @endphp
+                    
+                    @foreach($rekapProduk as $nama => $data)
+                        @php
+                            // Menghitung persentase lebar bar berdasarkan produk terlaris
+                            $percent = $maxQty > 0 ? ($data['qty'] / $maxQty) * 100 : 0;
+                        @endphp
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-sm font-semibold text-gray-700">{{ $nama }}</span>
+                                <span class="text-xs font-bold text-gray-900">{{ $data['qty'] }} cup</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2 mb-1">
+                                <div class="bg-red-500 h-2 rounded-full" style="width: {{ $percent }}%"></div>
+                            </div>
+                            <p class="text-xs text-right text-red-600 font-medium">Rp {{ number_format($data['subtotal'], 0, ',', '.') }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-sm text-gray-500 text-center py-4">Tidak ada data penjualan di rentang tanggal ini.</p>
+            @endif
+        </div>
+
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-gray-100">
+                <h3 class="font-bold text-gray-800">Detail Histori Transaksi</h3>
+            </div>
+            <div class="flex-1 overflow-x-auto">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                            <th class="p-4 font-bold">Waktu & Lapak</th>
+                            <th class="p-4 font-bold">Tipe</th>
+                            <th class="p-4 font-bold">Nama Titipan</th>
+                            <th class="p-4 font-bold text-right">Total Transaksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($transactions as $trx)
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-4">
+                                <p class="text-sm font-bold text-gray-800">{{ $trx->stall->tempat }}</p>
+                                <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($trx->created_at)->format('d/m/Y H:i') }}</p>
+                            </td>
+                            <td class="p-4">
+                                <span class="px-2 py-1 text-xs font-bold rounded-md {{ $trx->tipe == 'order' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700' }} uppercase">
+                                    {{ $trx->tipe }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-sm text-gray-700 font-medium">
+                                {{ $trx->nama_titipan ?: '-' }}
+                            </td>
+                            <td class="p-4 text-right font-bold text-red-600">
+                                Rp {{ number_format($trx->total_harga, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="p-6 text-center text-gray-500">Belum ada transaksi di rentang tanggal ini.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+</x-app-layout>
