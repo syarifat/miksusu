@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use App\Models\TransactionItem;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
@@ -45,5 +46,40 @@ class ReportController extends Controller
         return view('reports.sales', compact(
             'transactions', 'totalPendapatan', 'totalTransaksi', 'rekapProduk', 'startDate', 'endDate'
         ));
+    }
+
+    public function exportPdf(Request $request)
+    {
+        // Ambil filter tanggal dari URL (sama seperti di halaman web)
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+
+        // Query data (sama persis dengan yang di method sales)
+        $transactions = Transaction::with(['stall', 'items.product'])
+            ->whereHas('stall', function($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal', [$startDate, $endDate]);
+            })
+            ->latest()
+            ->get();
+
+        $totalPendapatan = $transactions->sum('total_harga');
+        $totalTransaksi = $transactions->count();
+
+        // Siapkan data untuk dilempar ke view PDF
+        $data = [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'transactions' => $transactions,
+            'totalPendapatan' => $totalPendapatan,
+            'totalTransaksi' => $totalTransaksi,
+        ];
+
+        // Load view khusus PDF dan download hasilnya
+        $pdf = Pdf::loadView('reports.pdf', $data);
+        
+        // Nama file dinamis
+        $namaFile = 'Laporan-Miksusu-' . Carbon::parse($startDate)->format('d-M-Y') . '.pdf';
+        
+        return $pdf->download($namaFile);
     }
 }

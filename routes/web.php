@@ -15,7 +15,7 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-    
+
 // Route khusus sistem yang wajib login
 Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('finances', FinanceController::class)->except(['show']);
     // Route Laporan
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('/reports/sales/pdf', [ReportController::class, 'exportPdf'])->name('reports.sales.pdf');
 
     // Route profile bawaan breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
