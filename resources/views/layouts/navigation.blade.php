@@ -25,7 +25,7 @@
             <span class="font-medium">Data Master Produk</span>
         </a>
 
-        <a href="#" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
+        <a href="{{ route('stalls.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
             <span class="font-medium">Kelola Lapak</span>
         </a>
 
