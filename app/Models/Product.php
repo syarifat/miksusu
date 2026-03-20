@@ -18,4 +18,9 @@ class Product extends Model
     {
         return $this->hasMany(TransactionItem::class);
     }
+
+    public function stallProducts(): HasMany
+    {
+        return $this->hasMany(StallProduct::class);
+    }
 }
