@@ -33,7 +33,7 @@
             <span class="font-medium">POS Kasir</span>
         </a>
 
-        <a href="#" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
+        <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
             <span class="font-medium">Kelola Keuangan</span>
         </a>
     </nav>

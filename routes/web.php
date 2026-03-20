@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StallController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\FinanceController;
 
 Route::get('/', function () {
     return redirect()->route('login'); // Langsung lempar ke login
@@ -23,7 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
     Route::get('/pos/{stall}', [PosController::class, 'create'])->name('pos.create');
     Route::post('/pos/{stall}', [PosController::class, 'store'])->name('pos.store');
-
+    // Route Kelola Keuangan
+    Route::resource('finances', FinanceController::class)->except(['show']);   
 
     // Route profile bawaan breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
