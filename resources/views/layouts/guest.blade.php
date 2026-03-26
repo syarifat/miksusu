@@ -8,6 +8,9 @@
         <title>{{ config('app.name', 'Miksusu') }} - Login</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="icon" type="image/png" href="{{ asset('storage/logo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/logo.png') }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/logo.png') }}">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
