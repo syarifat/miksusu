@@ -29,10 +29,6 @@
             <span class="font-medium">Kelola Lapak</span>
         </a>
 
-        <a href="{{ route('pos.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
-            <span class="font-medium">POS Kasir</span>
-        </a>
-
         <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
             <span class="font-medium">Kelola Keuangan</span>
         </a>
