@@ -16,16 +16,17 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Route untuk Menu POS Kasir
+Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+Route::get('/pos/{stall}', [PosController::class, 'create'])->name('pos.create');
+Route::post('/pos/{stall}', [PosController::class, 'store'])->name('pos.store');
+
 // Route khusus sistem yang wajib login
 Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     // Route untuk Menu Lapak
     Route::resource('stalls', StallController::class);
     Route::patch('/stalls/{stall}/toggle-status', [StallController::class, 'toggleStatus'])->name('stalls.toggle-status');
-    // Route untuk Menu POS Kasir
-    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-    Route::get('/pos/{stall}', [PosController::class, 'create'])->name('pos.create');
-    Route::post('/pos/{stall}', [PosController::class, 'store'])->name('pos.store');
     // Route Kelola Keuangan
     Route::resource('finances', FinanceController::class)->except(['show']);
     // Route Laporan
