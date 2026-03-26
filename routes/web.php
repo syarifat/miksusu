@@ -7,10 +7,9 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingController;
 
-Route::get('/', function () {
-    return redirect()->route('login'); // Langsung lempar ke login
-});
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
