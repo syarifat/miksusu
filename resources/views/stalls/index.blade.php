@@ -28,6 +28,24 @@
             </div>
 
             <div class="p-4 flex-1">
+                @if($stall->users->count() > 0)
+                    <div class="mb-3">
+                        <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kasir Bertugas:</h4>
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($stall->users as $user)
+                                <span class="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-md border border-blue-200">
+                                    {{ $user->name }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <div class="mb-3">
+                        <span class="px-2 py-0.5 bg-yellow-50 text-yellow-700 text-xs font-semibold rounded-md border border-yellow-200">
+                            Belum Ada Kasir
+                        </span>
+                    </div>
+                @endif
                 <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Barang Bawaan:</h4>
                 <ul class="space-y-2 text-sm">
                     @forelse($stall->stallProducts as $sp)

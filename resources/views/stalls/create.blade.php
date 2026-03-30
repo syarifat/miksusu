@@ -20,6 +20,16 @@
                 </div>
             </div>
 
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Penjaga Lapak (Kasir)</label>
+                <select name="kasirs[]" multiple class="w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring-red-500 min-h-[100px]">
+                    @foreach($kasirs as $kasir)
+                        <option value="{{ $kasir->id }}">{{ $kasir->name }}</option>
+                    @endforeach
+                </select>
+                <p class="text-xs text-gray-400 mt-1">Tahan tombol Ctrl (Windows) atau Cmd (Mac) untuk memilih lebih dari satu atau membatalkan pilihan.</p>
+            </div>
+
             <hr class="mb-4">
             
             <div class="mb-4">

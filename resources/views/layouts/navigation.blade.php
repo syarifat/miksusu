@@ -17,41 +17,49 @@
     </div>
 
     <nav class="mt-6 px-4 space-y-2 flex-1 overflow-y-auto">
-        <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium">Dashboard</span>
-        </a>
-        
-        <a href="{{ route('products.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('products.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium">Data Master Produk</span>
-        </a>
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">Dashboard</span>
+            </a>
+            
+            <a href="{{ route('products.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('products.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">Data Master Produk</span>
+            </a>
 
-        <a href="{{ route('stalls.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('stalls.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium">Kelola Lapak</span>
-        </a>
+            <a href="{{ route('stalls.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('stalls.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">Kelola Lapak</span>
+            </a>
+        @endif
 
         <a href="{{ route('pos.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('pos.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
             <span class="font-medium">POS Kasir</span>
         </a>
 
-        <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('finances.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium">Kelola Keuangan</span>
-        </a>
-        <a href="{{ route('finance-categories.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('finance-categories.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium ml-4 border-l-2 border-red-300 pl-2 text-sm text-red-100">Kategori Keuangan</span>
-        </a>
-        <a href="{{ route('reports.sales') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium">Laporan Penjualan</span>
-        </a>
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('finances.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">Kelola Keuangan</span>
+            </a>
+            <a href="{{ route('finance-categories.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('finance-categories.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium ml-4 border-l-2 border-red-300 pl-2 text-sm text-red-100">Kategori Keuangan</span>
+            </a>
+            <a href="{{ route('reports.sales') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">Laporan Penjualan</span>
+            </a>
 
-        <a href="{{ route('preorders.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('preorders.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium">📦 Rekap Preorder</span>
-        </a>
+            <a href="{{ route('preorders.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('preorders.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">📦 Rekap Preorder</span>
+            </a>
 
-        <div class="border-t border-red-600 my-2"></div>
+            <div class="border-t border-red-600 my-2"></div>
 
-        <a href="{{ route('activity-logs.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('activity-logs.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
-            <span class="font-medium">📋 Log Aktivitas</span>
-        </a>
+            <a href="{{ route('activity-logs.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('activity-logs.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">📋 Log Aktivitas</span>
+            </a>
+
+            <a href="{{ route('users.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('users.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+                <span class="font-medium">👥 Kelola Users (Kasir)</span>
+            </a>
+        @endif
     </nav>
 
     <div class="p-4 bg-red-800 border-t border-red-600">

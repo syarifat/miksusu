@@ -12,6 +12,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (auth()->user()->role === 'kasir') {
+            return redirect()->route('pos.index');
+        }
+
         $hariIni = Carbon::today();
 
         // 1. Ambil Lapak yang statusnya masih 'aktif'

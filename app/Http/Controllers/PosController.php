@@ -16,7 +16,13 @@ class PosController extends Controller
     // Menampilkan daftar lapak yang sedang AKTIF saja
     public function index()
     {
-        $stalls = Stall::where('status', 'aktif')->latest()->get();
+        $user = auth()->user();
+        if ($user->role === 'admin') {
+            $stalls = Stall::where('status', 'aktif')->latest()->get();
+        } else {
+            $stalls = $user->stalls()->where('status', 'aktif')->latest()->get();
+        }
+        
         return view('pos.index', compact('stalls'));
     }
 
@@ -28,6 +34,12 @@ class PosController extends Controller
             return redirect()->route('pos.index')->with('error', 'Lapak ini sudah ditutup.');
         }
 
+        // Pastikan User Punya Akses (Jika Kasir)
+        $user = auth()->user();
+        if ($user->role !== 'admin' && !$user->stalls->contains($stall->id)) {
+            abort(403, 'Akses ditolak: Anda tidak ditugaskan untuk menjaga lapak ini.');
+        }
+
         // Ambil barang bawaan lapak beserta detail produknya
         $stall->load('stallProducts.product');
         
@@ -37,6 +49,12 @@ class PosController extends Controller
     // Memproses transaksi penjualan
     public function store(Request $request, Stall $stall)
     {
+        // Pastikan User Punya Akses (Jika Kasir)
+        $user = auth()->user();
+        if ($user->role !== 'admin' && !$user->stalls->contains($stall->id)) {
+            abort(403, 'Akses ditolak: Anda tidak ditugaskan untuk menjaga lapak ini.');
+        }
+
         $request->validate([
             'tipe' => 'required|in:order,preorder',
             'nama_titipan' => 'required_if:tipe,preorder|nullable|string|max:255',

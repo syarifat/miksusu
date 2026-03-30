@@ -13,6 +13,7 @@ class User extends Authenticatable
         'name',
         'username',
         'password',
+        'role',
     ];
 
     protected $hidden = [
@@ -25,5 +26,10 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function stalls()
+    {
+        return $this->belongsToMany(Stall::class);
     }
 }

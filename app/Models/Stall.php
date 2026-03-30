@@ -24,4 +24,10 @@ class Stall extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
+    // Relasi: Lapak dijaga oleh beberapa kasir (user)
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

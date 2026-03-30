@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Stall;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\StallProduct;
 use App\Helpers\ActivityLogger;
@@ -14,14 +15,15 @@ class StallController extends Controller
     public function index()
     {
         // Menampilkan lapak terbaru di atas
-        $stalls = Stall::with('stallProducts.product')->latest('tanggal')->latest('id')->get();
+        $stalls = Stall::with(['stallProducts.product', 'users'])->latest('tanggal')->latest('id')->get();
         return view('stalls.index', compact('stalls'));
     }
 
     public function create()
     {
         $products = Product::orderBy('nama')->get();
-        return view('stalls.create', compact('products'));
+        $kasirs = User::where('role', 'kasir')->get();
+        return view('stalls.create', compact('products', 'kasirs'));
     }
 
     public function store(Request $request)
@@ -30,6 +32,8 @@ class StallController extends Controller
             'tanggal' => 'required|date',
             'tempat' => 'required|string|max:255',
             'stok' => 'required|array', // Array stok dari form
+            'kasirs' => 'nullable|array', // Array dari user id penjaga lapak
+            'kasirs.*' => 'exists:users,id',
         ]);
 
         DB::beginTransaction();
@@ -40,6 +44,11 @@ class StallController extends Controller
                 'tempat' => $request->tempat,
                 'status' => 'aktif',
             ]);
+
+            // Sync Penjaga Kasir
+            if ($request->has('kasirs')) {
+                $stall->users()->sync($request->kasirs);
+            }
 
             // 2. Simpan Produk yang dibawa (Hanya yang stoknya diisi > 0)
             $stokItems = [];
