@@ -235,143 +235,142 @@
                 radial-gradient(circle at 75% 75%, rgba(220, 38, 38, 0.03) 0%, transparent 50%);
         }
     </style>
+    <script>
+    function miksusuApp() {
+        return {
+            cart: [],
+            isCartOpen: false,
+            isCheckoutOpen: false,
+            customerName: '',
+            selectedAdmin: '',
+            paymentMethod: '',
+            deliveryMethod: '',
+            adminList: [
+                { nama: 'Admin Hukma', wa: '6289617377022' },
+                { nama: 'Admin Ayun', wa: '6283857215627' },
+                { nama: 'Admin Herjun', wa: '6285854703338' },
+                { nama: 'Admin Azizah', wa: '62895395657213' },
+                { nama: 'Admin Dimas', wa: '62881011340460' },
+                { nama: 'Admin Gesang', wa: '6281234567895' },
+            ],
+
+            formatRupiah(angka) {
+                return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+            },
+
+            getItemQty(id) {
+                let item = this.cart.find(i => i.id === id);
+                return item ? item.qty : 0;
+            },
+
+            addToCart(id, nama, harga, foto) {
+                let item = this.cart.find(i => i.id === id);
+                if (item) {
+                    item.qty++;
+                } else {
+                    this.cart.push({ id, nama, harga, foto, qty: 1 });
+                }
+            },
+            minQty(id) {
+                let item = this.cart.find(i => i.id === id);
+                if (item) {
+                    if (item.qty > 1) {
+                        item.qty--;
+                    } else {
+                        this.cart = this.cart.filter(i => i.id !== id);
+                    }
+                }
+            },
+            get totalItem() {
+                return this.cart.reduce((total, item) => total + item.qty, 0);
+            },
+            get totalPrice() {
+                return this.cart.reduce((total, item) => total + (item.harga * item.qty), 0);
+            },
+            checkoutWA() {
+                if(this.cart.length === 0) return;
+                if(this.customerName.trim() === '') {
+                    this.$dispatch('notify', 'Boleh isi nama panggilan kamu dulu ya 😊');
+                    document.getElementById('customerName').focus();
+                    return;
+                }
+                this.isCartOpen = false;
+                setTimeout(() => { this.isCheckoutOpen = true; }, 350);
+            },
+            buildWAText(payLabel, delivLabel) {
+                let text = 'Halo Admin *Miksusu*! \nSaya *' + this.customerName + '* mau pesan:\n\n';
+                this.cart.forEach((item, index) => {
+                    text += (index+1) + '. ' + item.nama + ' (' + item.qty + ' botol)\n    ' + this.formatRupiah(item.harga * item.qty) + '\n';
+                });
+                text += '\n*Total: ' + this.formatRupiah(this.totalPrice) + '*\n';
+                text += '💳 Pembayaran: *' + payLabel + '*\n';
+                text += '📦 Pengambilan: *' + delivLabel + '*\n\n';
+                text += 'Terima kasih!';
+                return text;
+            },
+            sendToWA() {
+                if (!this.selectedAdmin) {
+                    this.$dispatch('notify', 'Pilih admin yang ingin dihubungi ya 😊');
+                    return;
+                }
+                if (!this.paymentMethod) {
+                    this.$dispatch('notify', 'Pilih metode pembayaran dulu ya 💳');
+                    return;
+                }
+                if (!this.deliveryMethod) {
+                    this.$dispatch('notify', 'Pilih metode pengambilan dulu ya 📦');
+                    return;
+                }
+
+                let adminInfo = this.adminList.find(a => a.wa === this.selectedAdmin);
+                let payLabel = {'cash': 'Cash', 'qris': 'QRIS', 'transfer': 'Transfer Bank'}[this.paymentMethod];
+                let delivLabel = {'cod': 'COD (Bayar di Tempat)', 'ambil': 'Ambil di Tempat', 'antar': 'Antar ke Rumah'}[this.deliveryMethod];
+
+                let csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                let self = this;
+
+                fetch('/api/preorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nama_pelanggan: self.customerName,
+                        admin_nama: adminInfo ? adminInfo.nama : 'Admin',
+                        admin_wa: self.selectedAdmin,
+                        metode_pembayaran: self.paymentMethod,
+                        metode_pengambilan: self.deliveryMethod,
+                        items: self.cart.map(i => ({
+                            id: i.id,
+                            nama: i.nama,
+                            harga: i.harga,
+                            qty: i.qty,
+                        })),
+                    }),
+                }).then(res => res.json()).then(data => {
+                    let text = self.buildWAText(payLabel, delivLabel);
+                    let url = 'https://wa.me/' + self.selectedAdmin + '?text=' + encodeURIComponent(text);
+                    window.open(url, '_blank');
+                    self.isCheckoutOpen = false;
+                    self.cart = [];
+                    self.customerName = '';
+                    self.selectedAdmin = '';
+                    self.paymentMethod = '';
+                    self.deliveryMethod = '';
+                }).catch(err => {
+                    let text = self.buildWAText(payLabel, delivLabel);
+                    let url = 'https://wa.me/' + self.selectedAdmin + '?text=' + encodeURIComponent(text);
+                    window.open(url, '_blank');
+                    self.isCheckoutOpen = false;
+                });
+            }
+        }
+    }
+    </script>
 </head>
-<body class="section-pattern antialiased text-gray-900 pb-20 md:pb-0"
-      x-data="{
-          cart: [],
-          isCartOpen: false,
-          isCheckoutOpen: false,
-          customerName: '',
-          selectedAdmin: '',
-          paymentMethod: '',
-          deliveryMethod: '',
-          adminList: [
-              { nama: 'Admin Hukma', wa: '6289617377022' },
-              { nama: 'Admin Ayun', wa: '6283857215627' },
-              { nama: 'Admin Herjun', wa: '6285854703338' },
-              { nama: 'Admin Azizah', wa: '62895395657213' },
-              { nama: 'Admin Dimas', wa: '62881011340460' },
-              { nama: 'Admin Gesang', wa: '6281234567895' },
-          ],
-
-          formatRupiah(angka) {
-              return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
-          },
-
-          getItemQty(id) {
-              let item = this.cart.find(i => i.id === id);
-              return item ? item.qty : 0;
-          },
-
-          addToCart(id, nama, harga, foto) {
-              let item = this.cart.find(i => i.id === id);
-              if (item) {
-                  item.qty++;
-              } else {
-                  this.cart.push({ id, nama, harga, foto, qty: 1 });
-              }
-          },
-          minQty(id) {
-              let item = this.cart.find(i => i.id === id);
-              if (item) {
-                  if (item.qty > 1) {
-                      item.qty--;
-                  } else {
-                      this.cart = this.cart.filter(i => i.id !== id);
-                  }
-              }
-          },
-          get totalItem() {
-              return this.cart.reduce((total, item) => total + item.qty, 0);
-          },
-          get totalPrice() {
-              return this.cart.reduce((total, item) => total + (item.harga * item.qty), 0);
-          },
-          checkoutWA() {
-              if(this.cart.length === 0) return;
-              if(this.customerName.trim() === '') {
-                  $dispatch('notify', 'Boleh isi nama panggilan kamu dulu ya \ud83d\ude0a');
-                  document.getElementById('customerName').focus();
-                  return;
-              }
-              this.isCartOpen = false;
-              setTimeout(() => { this.isCheckoutOpen = true; }, 350);
-          },
-          sendToWA() {
-              if (!this.selectedAdmin) {
-                  $dispatch('notify', 'Pilih admin yang ingin dihubungi ya \ud83d\ude0a');
-                  return;
-              }
-              if (!this.paymentMethod) {
-                  $dispatch('notify', 'Pilih metode pembayaran dulu ya \ud83d\udcb3');
-                  return;
-              }
-              if (!this.deliveryMethod) {
-                  $dispatch('notify', 'Pilih metode pengambilan dulu ya \ud83d\udce6');
-                  return;
-              }
-
-              let adminInfo = this.adminList.find(a => a.wa === this.selectedAdmin);
-              let payLabel = {'cash': 'Cash', 'qris': 'QRIS', 'transfer': 'Transfer Bank'}[this.paymentMethod];
-              let delivLabel = {'cod': 'COD (Bayar di Tempat)', 'ambil': 'Ambil di Tempat', 'antar': 'Antar ke Rumah'}[this.deliveryMethod];
-
-              // Simpan ke database dulu
-              fetch('/api/preorder', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                      'Accept': 'application/json',
-                  },
-                  body: JSON.stringify({
-                      nama_pelanggan: this.customerName,
-                      admin_nama: adminInfo ? adminInfo.nama : 'Admin',
-                      admin_wa: this.selectedAdmin,
-                      metode_pembayaran: this.paymentMethod,
-                      metode_pengambilan: this.deliveryMethod,
-                      items: this.cart.map(i => ({
-                          id: i.id,
-                          nama: i.nama,
-                          harga: i.harga,
-                          qty: i.qty,
-                      })),
-                  }),
-              }).then(res => res.json()).then(data => {
-                  // Buka WhatsApp setelah tersimpan
-                  let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan:\n\n`;
-                  this.cart.forEach((item, index) => {
-                      text += `${index+1}. ${item.nama} (${item.qty} botol)\n    ${this.formatRupiah(item.harga * item.qty)}\n`;
-                  });
-                  text += `\n*Total: ${this.formatRupiah(this.totalPrice)}*\n`;
-                  text += `\ud83d\udcb3 Pembayaran: *${payLabel}*\n`;
-                  text += `\ud83d\udce6 Pengambilan: *${delivLabel}*\n\n`;
-                  text += 'Terima kasih!';
-
-                  let url = `https://wa.me/${this.selectedAdmin}?text=${encodeURIComponent(text)}`;
-                  window.open(url, '_blank');
-                  this.isCheckoutOpen = false;
-                  this.cart = [];
-                  this.customerName = '';
-                  this.selectedAdmin = '';
-                  this.paymentMethod = '';
-                  this.deliveryMethod = '';
-              }).catch(err => {
-                  // Tetap buka WA meskipun gagal simpan
-                  let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan:\n\n`;
-                  this.cart.forEach((item, index) => {
-                      text += `${index+1}. ${item.nama} (${item.qty} botol)\n    ${this.formatRupiah(item.harga * item.qty)}\n`;
-                  });
-                  text += `\n*Total: ${this.formatRupiah(this.totalPrice)}*\n`;
-                  text += `\ud83d\udcb3 Pembayaran: *${payLabel}*\n`;
-                  text += `\ud83d\udce6 Pengambilan: *${delivLabel}*\n\n`;
-                  text += 'Terima kasih!';
-
-                  let url = `https://wa.me/${this.selectedAdmin}?text=${encodeURIComponent(text)}`;
-                  window.open(url, '_blank');
-                  this.isCheckoutOpen = false;
-              });
-          }
-      }">
+<body class="section-pattern antialiased text-gray-900 pb-20 md:pb-0" x-data="miksusuApp()">
 
     {{-- ============ TOAST NOTIFICATION ============ --}}
     <div x-data="{ show: false, message: '' }"
