@@ -239,14 +239,24 @@
       x-data="{
           cart: [],
           isCartOpen: false,
+          isCheckoutOpen: false,
           customerName: '',
-          adminWa: '6289617377022', // GANTI DENGAN NOMOR WA ADMIN
+          selectedAdmin: '',
+          paymentMethod: '',
+          deliveryMethod: '',
+          adminList: [
+              { nama: 'Admin 1 - Sari', wa: '6289617377022' },
+              { nama: 'Admin 2 - Dewi', wa: '6281234567891' },
+              { nama: 'Admin 3 - Rina', wa: '6281234567892' },
+              { nama: 'Admin 4 - Ayu', wa: '6281234567893' },
+              { nama: 'Admin 5 - Fitri', wa: '6281234567894' },
+              { nama: 'Admin 6 - Lina', wa: '6281234567895' },
+          ],
 
           formatRupiah(angka) {
               return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
           },
 
-          // FUNGSI BARU: Mengambil jumlah qty item spesifik
           getItemQty(id) {
               let item = this.cart.find(i => i.id === id);
               return item ? item.qty : 0;
@@ -259,7 +269,6 @@
               } else {
                   this.cart.push({ id, nama, harga, foto, qty: 1 });
               }
-              // isCartOpen = true DIHAPUS agar tidak mengganggu saat ngeklik tombol +
           },
           minQty(id) {
               let item = this.cart.find(i => i.id === id);
@@ -280,20 +289,41 @@
           checkoutWA() {
               if(this.cart.length === 0) return;
               if(this.customerName.trim() === '') {
-                  $dispatch('notify', 'Boleh isi nama panggilan kamu dulu ya 😊');
+                  $dispatch('notify', 'Boleh isi nama panggilan kamu dulu ya \ud83d\ude0a');
                   document.getElementById('customerName').focus();
                   return;
               }
+              this.isCheckoutOpen = true;
+          },
+          sendToWA() {
+              if (!this.selectedAdmin) {
+                  $dispatch('notify', 'Pilih admin yang ingin dihubungi ya \ud83d\ude0a');
+                  return;
+              }
+              if (!this.paymentMethod) {
+                  $dispatch('notify', 'Pilih metode pembayaran dulu ya \ud83d\udcb3');
+                  return;
+              }
+              if (!this.deliveryMethod) {
+                  $dispatch('notify', 'Pilih metode pengambilan dulu ya \ud83d\udce6');
+                  return;
+              }
 
-              let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan orderan berikut:\n\n`;
+              let payLabel = this.paymentMethod === 'qris' ? 'QRIS' : 'Cash';
+              let delivLabel = {'cod': 'COD (Bayar di Tempat)', 'ambil': 'Ambil di Tempat', 'antar': 'Antar ke Rumah'}[this.deliveryMethod];
+
+              let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan:\n\n`;
               this.cart.forEach((item, index) => {
                   text += `${index+1}. ${item.nama} (${item.qty} botol)\n    ${this.formatRupiah(item.harga * item.qty)}\n`;
               });
-              text += `\n*Total Pesanan: ${this.formatRupiah(this.totalPrice)}*\n\n`;
+              text += `\n*Total: ${this.formatRupiah(this.totalPrice)}*\n`;
+              text += `\ud83d\udcb3 Pembayaran: *${payLabel}*\n`;
+              text += `\ud83d\udce6 Pengambilan: *${delivLabel}*\n\n`;
               text += 'Terima kasih!';
 
-              let url = `https://wa.me/${this.adminWa}?text=${encodeURIComponent(text)}`;
+              let url = `https://wa.me/${this.selectedAdmin}?text=${encodeURIComponent(text)}`;
               window.open(url, '_blank');
+              this.isCheckoutOpen = false;
           }
       }">
 
@@ -710,7 +740,7 @@
                                         :class="(cart.length === 0 || customerName.trim() === '') ? 'disabled-btn' : ''"
                                         class="btn-checkout flex w-full items-center justify-center rounded-2xl px-6 py-4 text-lg font-extrabold text-white cursor-pointer">
                                     <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                                    Kirim Pesanan (WhatsApp)
+                                    Lanjut Pesan →
                                 </button>
                             </div>
 
@@ -720,5 +750,113 @@
             </div>
         </div>
     </div>
+    {{-- ============ CHECKOUT MODAL ============ --}}
+    <div x-show="isCheckoutOpen" class="fixed inset-0 z-[60]" x-cloak>
+        <div x-show="isCheckoutOpen"
+             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-gray-950/70 backdrop-blur-md" @click="isCheckoutOpen = false"></div>
+
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div x-show="isCheckoutOpen"
+                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-90"
+                 class="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" @click.away="isCheckoutOpen = false">
+
+                <div class="px-6 pt-6 pb-4 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl font-extrabold text-gray-900">Konfirmasi Pesanan</h3>
+                            <p class="text-sm text-gray-400 font-medium mt-0.5">Lengkapi data sebelum kirim ke WhatsApp</p>
+                        </div>
+                        <button @click="isCheckoutOpen = false" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="px-6 py-5 space-y-6">
+                    <div class="bg-red-50/60 rounded-2xl p-4 border border-red-100/60">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold text-gray-600">Total Pesanan</span>
+                            <span class="text-xl font-extrabold text-red-600" x-text="formatRupiah(totalPrice)"></span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Atas nama: <span class="font-bold text-gray-600" x-text="customerName"></span> &middot; <span x-text="totalItem"></span> item</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2.5">📱 Pilih Admin WhatsApp</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <template x-for="admin in adminList" :key="admin.wa">
+                                <button @click="selectedAdmin = admin.wa" type="button"
+                                        :class="selectedAdmin === admin.wa ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                        class="px-3 py-3 rounded-xl border-2 text-sm font-semibold transition-all text-center cursor-pointer">
+                                    <span x-text="admin.nama"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2.5">💳 Metode Pembayaran</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button @click="paymentMethod = 'qris'" type="button"
+                                    :class="paymentMethod === 'qris' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                    class="px-4 py-3.5 rounded-xl border-2 font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <span class="text-lg">📲</span> <span>QRIS</span>
+                            </button>
+                            <button @click="paymentMethod = 'cash'" type="button"
+                                    :class="paymentMethod === 'cash' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                    class="px-4 py-3.5 rounded-xl border-2 font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <span class="text-lg">💵</span> <span>Cash</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2.5">📦 Metode Pengambilan</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button @click="deliveryMethod = 'cod'" type="button"
+                                    :class="deliveryMethod === 'cod' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                    class="px-4 py-3 rounded-xl border-2 font-semibold transition-all flex items-center gap-3 cursor-pointer">
+                                <span class="text-lg">🤝</span>
+                                <div class="text-left">
+                                    <span class="block text-sm">COD (Bayar di Tempat)</span>
+                                    <span class="block text-xs font-normal text-gray-400">Bayar saat barang diterima</span>
+                                </div>
+                            </button>
+                            <button @click="deliveryMethod = 'ambil'" type="button"
+                                    :class="deliveryMethod === 'ambil' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                    class="px-4 py-3 rounded-xl border-2 font-semibold transition-all flex items-center gap-3 cursor-pointer">
+                                <span class="text-lg">🏪</span>
+                                <div class="text-left">
+                                    <span class="block text-sm">Ambil di Tempat</span>
+                                    <span class="block text-xs font-normal text-gray-400">Ambil langsung di lapak Miksusu</span>
+                                </div>
+                            </button>
+                            <button @click="deliveryMethod = 'antar'" type="button"
+                                    :class="deliveryMethod === 'antar' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                    class="px-4 py-3 rounded-xl border-2 font-semibold transition-all flex items-center gap-3 cursor-pointer">
+                                <span class="text-lg">🚚</span>
+                                <div class="text-left">
+                                    <span class="block text-sm">Antar ke Rumah</span>
+                                    <span class="block text-xs font-normal text-gray-400">Diantar langsung ke alamat kamu</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-5 border-t border-gray-100 bg-gradient-to-b from-gray-50/50">
+                    <button @click="sendToWA()" class="btn-checkout flex w-full items-center justify-center rounded-2xl px-6 py-4 text-base font-extrabold text-white cursor-pointer"
+                            :class="(!selectedAdmin || !paymentMethod || !deliveryMethod) ? 'disabled-btn' : ''">
+                        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        Kirim Pesanan via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
