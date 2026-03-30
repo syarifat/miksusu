@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -79,7 +80,9 @@ class ReportController extends Controller
         
         // Nama file dinamis
         $namaFile = 'Laporan-Miksusu-' . Carbon::parse($startDate)->format('d-M-Y') . '.pdf';
-        
+
+        ActivityLogger::log('export', 'laporan', 'Export laporan penjualan PDF periode ' . Carbon::parse($startDate)->format('d/m/Y') . ' - ' . Carbon::parse($endDate)->format('d/m/Y') . '. Total: Rp ' . number_format($totalPendapatan, 0, ',', '.') . ' (' . $totalTransaksi . ' transaksi)');
+
         return $pdf->download($namaFile);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\StallProduct;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -64,6 +65,7 @@ class PosController extends Controller
 
                     $itemsToInsert[] = [
                         'product_id' => $productId,
+                        'product_name' => $product->nama,
                         'qty' => $qty,
                         'harga_satuan' => $hargaSatuan, // Simpan permanen
                         'subtotal' => $subtotal,
@@ -85,6 +87,7 @@ class PosController extends Controller
             ]);
 
             // 3. Masukkan Detail Transaksi & Kurangi Stok Lapak
+            $logItems = [];
             foreach ($itemsToInsert as $item) {
                 TransactionItem::create([
                     'transaction_id' => $transaction->id,
@@ -96,9 +99,20 @@ class PosController extends Controller
 
                 // Kurangi stok sisa di lapak
                 $item['stall_product']->decrement('stok_sisa', $item['qty']);
+                $logItems[] = $item['product_name'] . ' x' . $item['qty'];
             }
 
             DB::commit();
+
+            ActivityLogger::log('create', 'pos', 'Transaksi baru di lapak ' . $stall->tempat . ' (' . $request->tipe . '). Items: ' . implode(', ', $logItems) . '. Total: Rp ' . number_format($totalHarga, 0, ',', '.'), null, [
+                'transaction_id' => $transaction->id,
+                'stall' => $stall->tempat,
+                'tipe' => $request->tipe,
+                'nama_titipan' => $request->nama_titipan,
+                'total_harga' => $totalHarga,
+                'items' => $logItems,
+            ]);
+
             return redirect()->route('pos.create', $stall->id)->with('success', 'Transaksi berhasil dicatat! Total: Rp ' . number_format($totalHarga, 0, ',', '.'));
 
         } catch (\Exception $e) {

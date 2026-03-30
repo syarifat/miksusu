@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Finance;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 
 class FinanceController extends Controller
@@ -35,7 +36,9 @@ class FinanceController extends Controller
             'tanggal_transaksi' => 'required|date',
         ]);
 
-        Finance::create($request->all());
+        $finance = Finance::create($request->all());
+
+        ActivityLogger::log('create', 'keuangan', 'Menambahkan catatan keuangan: ' . ucfirst($finance->tipe) . ' - ' . $finance->kategori . ' (Rp ' . number_format($finance->nominal, 0, ',', '.') . ')', null, $finance->toArray());
 
         return redirect()->route('finances.index')->with('success', 'Catatan keuangan berhasil ditambahkan!');
     }
@@ -56,14 +59,22 @@ class FinanceController extends Controller
             'tanggal_transaksi' => 'required|date',
         ]);
 
+        $dataLama = $finance->toArray();
         $finance->update($request->all());
+
+        ActivityLogger::log('update', 'keuangan', 'Mengupdate catatan keuangan: ' . ucfirst($finance->tipe) . ' - ' . $finance->kategori, $dataLama, $finance->fresh()->toArray());
 
         return redirect()->route('finances.index')->with('success', 'Catatan keuangan berhasil diperbarui!');
     }
 
     public function destroy(Finance $finance)
     {
+        $dataLama = $finance->toArray();
+
         $finance->delete();
+
+        ActivityLogger::log('delete', 'keuangan', 'Menghapus catatan keuangan: ' . ucfirst($dataLama['tipe']) . ' - ' . $dataLama['kategori'] . ' (Rp ' . number_format($dataLama['nominal'], 0, ',', '.') . ')', $dataLama);
+
         return back()->with('success', 'Catatan keuangan berhasil dihapus!');
     }
 }

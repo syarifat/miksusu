@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,8 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $dataLama = $request->user()->only(['name', 'username']);
+
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -33,6 +36,8 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+
+        ActivityLogger::log('update', 'profil', 'Mengupdate profil user', $dataLama, $request->user()->only(['name', 'username']));
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -47,6 +52,8 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        ActivityLogger::log('delete', 'profil', 'User ' . $user->name . ' menghapus akun sendiri', $user->only(['name', 'username']));
 
         Auth::logout();
 

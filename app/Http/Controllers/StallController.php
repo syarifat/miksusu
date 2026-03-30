@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Stall;
 use App\Models\Product;
 use App\Models\StallProduct;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,6 +42,7 @@ class StallController extends Controller
             ]);
 
             // 2. Simpan Produk yang dibawa (Hanya yang stoknya diisi > 0)
+            $stokItems = [];
             foreach ($request->stok as $productId => $qty) {
                 if ($qty > 0) {
                     StallProduct::create([
@@ -49,10 +51,15 @@ class StallController extends Controller
                         'stok_dibawa' => $qty,
                         'stok_sisa' => $qty, // Awal buka lapak, sisa = dibawa
                     ]);
+                    $product = Product::find($productId);
+                    $stokItems[] = ($product->nama ?? 'ID:'.$productId) . ' (' . $qty . ')';
                 }
             }
 
             DB::commit();
+
+            ActivityLogger::log('create', 'lapak', 'Membuka lapak baru di ' . $stall->tempat . ' (' . $stall->tanggal . '). Stok: ' . implode(', ', $stokItems), null, $stall->toArray());
+
             return redirect()->route('stalls.index')->with('success', 'Lapak berhasil dibuka!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -63,15 +70,26 @@ class StallController extends Controller
     // Fungsi khusus untuk Akhiri / Buka Kembali Lapak
     public function toggleStatus(Stall $stall)
     {
+        $statusLama = $stall->status;
         $stall->status = $stall->status === 'aktif' ? 'selesai' : 'aktif';
         $stall->save();
 
         $pesan = $stall->status === 'aktif' ? 'Lapak diaktifkan kembali.' : 'Lapak telah diselesaikan.';
+
+        ActivityLogger::log('toggle', 'lapak', 'Mengubah status lapak ' . $stall->tempat . ' dari "' . $statusLama . '" ke "' . $stall->status . '"',
+            ['status' => $statusLama],
+            ['status' => $stall->status]
+        );
+
         return back()->with('success', $pesan);
     }
 
     public function destroy(Stall $stall)
     {
+        $dataLama = $stall->toArray();
+
+        ActivityLogger::log('delete', 'lapak', 'Menghapus lapak ' . $stall->tempat . ' (' . $stall->tanggal . ')', $dataLama);
+
         $stall->delete(); // StallProduct otomatis terhapus karena cascadeOnDelete di migration
         return back()->with('success', 'Data Lapak berhasil dihapus beserta histori stoknya.');
     }

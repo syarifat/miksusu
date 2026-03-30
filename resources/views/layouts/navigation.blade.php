@@ -21,19 +21,29 @@
             <span class="font-medium">Dashboard</span>
         </a>
         
-        <a href="{{ route('products.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
+        <a href="{{ route('products.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('products.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
             <span class="font-medium">Data Master Produk</span>
         </a>
 
-        <a href="{{ route('stalls.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
+        <a href="{{ route('stalls.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('stalls.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
             <span class="font-medium">Kelola Lapak</span>
         </a>
 
-        <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors hover:bg-red-600">
+        <a href="{{ route('pos.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('pos.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+            <span class="font-medium">POS Kasir</span>
+        </a>
+
+        <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('finances.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
             <span class="font-medium">Kelola Keuangan</span>
         </a>
-        <a href="{{ route('reports.sales') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.sales') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+        <a href="{{ route('reports.sales') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
             <span class="font-medium">Laporan Penjualan</span>
+        </a>
+
+        <div class="border-t border-red-600 my-2"></div>
+
+        <a href="{{ route('activity-logs.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('activity-logs.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+            <span class="font-medium">📋 Log Aktivitas</span>
         </a>
     </nav>
 

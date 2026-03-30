@@ -8,6 +8,7 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\ActivityLogController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
     // Route Laporan
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('/reports/sales/pdf', [ReportController::class, 'exportPdf'])->name('reports.sales.pdf');
+
+    // Route Log Aktivitas
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
     // Route profile bawaan breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
