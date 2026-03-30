@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\StallProduct;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\Finance;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -119,6 +120,16 @@ class PosController extends Controller
                 $item['stall_product']->decrement('stok_sisa', $item['qty']);
                 $logItems[] = $item['product_name'] . ' x' . $item['qty'];
             }
+
+            // 4. Otomatis catat pemasukan ke Keuangan (Saldo Kas)
+            Finance::create([
+                'tanggal_transaksi' => now(),
+                'tipe' => 'pemasukan',
+                'kategori' => 'Penjualan Kasir',
+                'nominal' => $totalHarga,
+                'keterangan' => 'Penjualan otomatis dari POS Lapak: ' . $stall->tempat . ' (' . ucfirst($request->tipe) . ')',
+                'pic' => $user->name,
+            ]);
 
             DB::commit();
 
