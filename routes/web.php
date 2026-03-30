@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('stalls', StallController::class);
     Route::patch('/stalls/{stall}/toggle-status', [StallController::class, 'toggleStatus'])->name('stalls.toggle-status');
     // Route Kelola Keuangan
+    Route::get('/finances/pdf', [FinanceController::class, 'exportPdf'])->name('finances.pdf');
     Route::resource('finances', FinanceController::class)->except(['show']);
     // Route Laporan
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');

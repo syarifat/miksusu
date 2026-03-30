@@ -16,11 +16,16 @@
         </div>
     </div>
 
-    <div class="mb-4 flex justify-between items-center">
+    <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <h2 class="text-xl font-bold text-gray-800">Riwayat Transaksi</h2>
-        <a href="{{ route('finances.create') }}" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition-colors text-sm">
-            + Catat Transaksi
-        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('finances.pdf') }}" target="_blank" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md transition-colors text-sm flex items-center">
+                📄 Export PDF
+            </a>
+            <a href="{{ route('finances.create') }}" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition-colors text-sm flex items-center">
+                + Catat Transaksi
+            </a>
+        </div>
     </div>
 
     @if(session('success'))

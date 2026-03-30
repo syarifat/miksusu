@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Finance;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FinanceController extends Controller
 {
@@ -18,6 +19,21 @@ class FinanceController extends Controller
         $saldo = $totalPemasukan - $totalPengeluaran;
 
         return view('finances.index', compact('finances', 'totalPemasukan', 'totalPengeluaran', 'saldo'));
+    }
+
+    public function exportPdf()
+    {
+        $finances = Finance::orderBy('tanggal_transaksi', 'desc')->latest()->get();
+        
+        $totalPemasukan = $finances->where('tipe', 'pemasukan')->sum('nominal');
+        $totalPengeluaran = $finances->where('tipe', 'pengeluaran')->sum('nominal');
+        $saldo = $totalPemasukan - $totalPengeluaran;
+
+        $pdf = Pdf::loadView('finances.pdf', compact('finances', 'totalPemasukan', 'totalPengeluaran', 'saldo'));
+        
+        ActivityLogger::log('export', 'keuangan', 'Mengekspor laporan keuangan ke PDF');
+
+        return $pdf->download('Laporan_Keuangan_Miksusu.pdf');
     }
 
     public function create()
