@@ -8,8 +8,22 @@
 </head>
 <body class="bg-gray-100 font-sans antialiased">
     <div class="min-h-screen flex flex-col">
-        <header class="bg-red-600 shadow-lg p-4 text-white text-center">
+        <header class="bg-red-600 shadow-lg p-4 text-white flex flex-row items-center justify-between">
             <h1 class="text-2xl font-black tracking-tighter italic">MIKSUSU. POS</h1>
+            
+            <div class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block leading-tight">
+                    <p class="text-sm font-bold">{{ auth()->user()->name }}</p>
+                    <p class="text-[10px] text-red-200 font-black tracking-widest uppercase">{{ auth()->user()->role }}</p>
+                </div>
+                
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-red-800 hover:bg-red-900 border border-red-700 rounded-lg text-xs font-bold shadow transition-colors active:scale-95">
+                        KELUAR
+                    </button>
+                </form>
+            </div>
         </header>
 
         <main class="flex-grow container mx-auto px-4 py-8">
