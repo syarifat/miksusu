@@ -294,7 +294,7 @@
                   return;
               }
               this.isCartOpen = false;
-              this.isCheckoutOpen = true;
+              setTimeout(() => { this.isCheckoutOpen = true; }, 350);
           },
           sendToWA() {
               if (!this.selectedAdmin) {
