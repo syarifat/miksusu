@@ -40,6 +40,10 @@
             <span class="font-medium">Laporan Penjualan</span>
         </a>
 
+        <a href="{{ route('preorders.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('preorders.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+            <span class="font-medium">📦 Rekap Preorder</span>
+        </a>
+
         <div class="border-t border-red-600 my-2"></div>
 
         <a href="{{ route('activity-logs.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('activity-logs.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Miksusu - Susunya siapa? Ya Miksusu!</title>
     <meta name="description" content="Miksusu - Fresh milk specialist. Nikmati kelezatan susu murni racikan spesial dengan bahan premium dan gula asli. Pesan sekarang via WhatsApp!">
     <link rel="icon" type="image/png" href="{{ asset('storage/logo.png') }}">
@@ -310,21 +311,65 @@
                   return;
               }
 
+              let adminInfo = this.adminList.find(a => a.wa === this.selectedAdmin);
               let payLabel = {'cash': 'Cash', 'qris': 'QRIS', 'transfer': 'Transfer Bank'}[this.paymentMethod];
               let delivLabel = {'cod': 'COD (Bayar di Tempat)', 'ambil': 'Ambil di Tempat', 'antar': 'Antar ke Rumah'}[this.deliveryMethod];
 
-              let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan:\n\n`;
-              this.cart.forEach((item, index) => {
-                  text += `${index+1}. ${item.nama} (${item.qty} botol)\n    ${this.formatRupiah(item.harga * item.qty)}\n`;
-              });
-              text += `\n*Total: ${this.formatRupiah(this.totalPrice)}*\n`;
-              text += `\ud83d\udcb3 Pembayaran: *${payLabel}*\n`;
-              text += `\ud83d\udce6 Pengambilan: *${delivLabel}*\n\n`;
-              text += 'Terima kasih!';
+              // Simpan ke database dulu
+              fetch('/api/preorder', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                      'Accept': 'application/json',
+                  },
+                  body: JSON.stringify({
+                      nama_pelanggan: this.customerName,
+                      admin_nama: adminInfo ? adminInfo.nama : 'Admin',
+                      admin_wa: this.selectedAdmin,
+                      metode_pembayaran: this.paymentMethod,
+                      metode_pengambilan: this.deliveryMethod,
+                      items: this.cart.map(i => ({
+                          id: i.id,
+                          nama: i.nama,
+                          harga: i.harga,
+                          qty: i.qty,
+                      })),
+                  }),
+              }).then(res => res.json()).then(data => {
+                  // Buka WhatsApp setelah tersimpan
+                  let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan:\n\n`;
+                  this.cart.forEach((item, index) => {
+                      text += `${index+1}. ${item.nama} (${item.qty} botol)\n    ${this.formatRupiah(item.harga * item.qty)}\n`;
+                  });
+                  text += `\n*Total: ${this.formatRupiah(this.totalPrice)}*\n`;
+                  text += `\ud83d\udcb3 Pembayaran: *${payLabel}*\n`;
+                  text += `\ud83d\udce6 Pengambilan: *${delivLabel}*\n\n`;
+                  text += 'Terima kasih!';
 
-              let url = `https://wa.me/${this.selectedAdmin}?text=${encodeURIComponent(text)}`;
-              window.open(url, '_blank');
-              this.isCheckoutOpen = false;
+                  let url = `https://wa.me/${this.selectedAdmin}?text=${encodeURIComponent(text)}`;
+                  window.open(url, '_blank');
+                  this.isCheckoutOpen = false;
+                  this.cart = [];
+                  this.customerName = '';
+                  this.selectedAdmin = '';
+                  this.paymentMethod = '';
+                  this.deliveryMethod = '';
+              }).catch(err => {
+                  // Tetap buka WA meskipun gagal simpan
+                  let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan:\n\n`;
+                  this.cart.forEach((item, index) => {
+                      text += `${index+1}. ${item.nama} (${item.qty} botol)\n    ${this.formatRupiah(item.harga * item.qty)}\n`;
+                  });
+                  text += `\n*Total: ${this.formatRupiah(this.totalPrice)}*\n`;
+                  text += `\ud83d\udcb3 Pembayaran: *${payLabel}*\n`;
+                  text += `\ud83d\udce6 Pengambilan: *${delivLabel}*\n\n`;
+                  text += 'Terima kasih!';
+
+                  let url = `https://wa.me/${this.selectedAdmin}?text=${encodeURIComponent(text)}`;
+                  window.open(url, '_blank');
+                  this.isCheckoutOpen = false;
+              });
           }
       }">
 

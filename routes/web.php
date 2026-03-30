@@ -9,8 +9,10 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\PreorderController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::post('/api/preorder', [PreorderController::class, 'store'])->name('api.preorder.store');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -35,6 +37,11 @@ Route::middleware('auth')->group(function () {
 
     // Route Log Aktivitas
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+
+    // Route Rekap Preorder
+    Route::get('/preorders', [PreorderController::class, 'index'])->name('preorders.index');
+    Route::patch('/preorders/{preorder}/status', [PreorderController::class, 'updateStatus'])->name('preorders.status');
+    Route::delete('/preorders/{preorder}', [PreorderController::class, 'destroy'])->name('preorders.destroy');
 
     // Route profile bawaan breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
