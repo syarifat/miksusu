@@ -293,6 +293,7 @@
                   document.getElementById('customerName').focus();
                   return;
               }
+              this.isCartOpen = false;
               this.isCheckoutOpen = true;
           },
           sendToWA() {
@@ -751,7 +752,7 @@
         </div>
     </div>
     {{-- ============ CHECKOUT MODAL ============ --}}
-    <div x-show="isCheckoutOpen" class="fixed inset-0 z-[60]" x-cloak>
+    <div x-show="isCheckoutOpen" class="fixed inset-0 z-[70]" x-cloak>
         <div x-show="isCheckoutOpen"
              x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
              x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
