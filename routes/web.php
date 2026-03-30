@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PreorderController;
+use App\Http\Controllers\FinanceCategoryController;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::post('/api/preorder', [PreorderController::class, 'store'])->name('api.preorder.store');
@@ -32,6 +33,7 @@ Route::middleware('auth')->group(function () {
     // Route Kelola Keuangan
     Route::get('/finances/pdf', [FinanceController::class, 'exportPdf'])->name('finances.pdf');
     Route::resource('finances', FinanceController::class)->except(['show']);
+    Route::resource('finance-categories', FinanceCategoryController::class)->except(['create', 'show', 'edit']);
     // Route Laporan
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('/reports/sales/pdf', [ReportController::class, 'exportPdf'])->name('reports.sales.pdf');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Finance;
+use App\Models\FinanceCategory;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -38,7 +39,8 @@ class FinanceController extends Controller
 
     public function create()
     {
-        return view('finances.create');
+        $categories = FinanceCategory::orderBy('nama_kategori')->get();
+        return view('finances.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -61,7 +63,8 @@ class FinanceController extends Controller
 
     public function edit(Finance $finance)
     {
-        return view('finances.edit', compact('finance'));
+        $categories = FinanceCategory::orderBy('nama_kategori')->get();
+        return view('finances.edit', compact('finance', 'categories'));
     }
 
     public function update(Request $request, Finance $finance)

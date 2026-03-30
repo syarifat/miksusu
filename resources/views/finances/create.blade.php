@@ -25,17 +25,16 @@
                     <select name="kategori" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-red-500 focus:ring-red-500">
                         <template x-if="tipe == 'pengeluaran'">
                             <>
-                                <option value="Bahan Baku">Bahan Baku</option>
-                                <option value="Operasional Lapak">Operasional Lapak</option>
-                                <option value="Gaji / Komisi">Gaji / Komisi</option>
-                                <option value="Lain-lain">Lain-lain</option>
+                                @foreach($categories->where('tipe', 'pengeluaran') as $cat)
+                                    <option value="{{ $cat->nama_kategori }}">{{ $cat->nama_kategori }}</option>
+                                @endforeach
                             </>
                         </template>
                         <template x-if="tipe == 'pemasukan'">
                             <>
-                                <option value="Penjualan Luar">Penjualan Luar (Non-Kasir)</option>
-                                <option value="Modal Awal">Modal Awal</option>
-                                <option value="Lain-lain">Lain-lain</option>
+                                @foreach($categories->where('tipe', 'pemasukan') as $cat)
+                                    <option value="{{ $cat->nama_kategori }}">{{ $cat->nama_kategori }}</option>
+                                @endforeach
                             </>
                         </template>
                     </select>

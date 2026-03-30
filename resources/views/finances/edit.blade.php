@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">Edit Catatan Keuangan</x-slot>
 
-    <div class="max-w-2xl bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="max-w-2xl bg-white rounded-xl shadow-sm border border-gray-200 p-6" x-data="{ tipe: '{{ $finance->tipe }}' }">
         <form action="{{ route('finances.update', $finance->id) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
@@ -13,7 +13,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Transaksi</label>
-                    <select name="tipe" class="w-full border-gray-300 rounded-lg shadow-sm">
+                    <select name="tipe" x-model="tipe" class="w-full border-gray-300 rounded-lg shadow-sm">
                         <option value="pengeluaran" {{ $finance->tipe == 'pengeluaran' ? 'selected' : '' }}>Pengeluaran</option>
                         <option value="pemasukan" {{ $finance->tipe == 'pemasukan' ? 'selected' : '' }}>Pemasukan</option>
                     </select>
@@ -22,8 +22,23 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Kategori (Ubah manual jika perlu)</label>
-                    <input type="text" name="kategori" value="{{ $finance->kategori }}" required class="w-full border-gray-300 rounded-lg shadow-sm">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                    <select name="kategori" class="w-full border-gray-300 rounded-lg shadow-sm">
+                        <template x-if="tipe == 'pengeluaran'">
+                            <>
+                                @foreach($categories->where('tipe', 'pengeluaran') as $cat)
+                                    <option value="{{ $cat->nama_kategori }}" {{ $finance->kategori == $cat->nama_kategori ? 'selected' : '' }}>{{ $cat->nama_kategori }}</option>
+                                @endforeach
+                            </>
+                        </template>
+                        <template x-if="tipe == 'pemasukan'">
+                            <>
+                                @foreach($categories->where('tipe', 'pemasukan') as $cat)
+                                    <option value="{{ $cat->nama_kategori }}" {{ $finance->kategori == $cat->nama_kategori ? 'selected' : '' }}>{{ $cat->nama_kategori }}</option>
+                                @endforeach
+                            </>
+                        </template>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nominal (Rp)</label>

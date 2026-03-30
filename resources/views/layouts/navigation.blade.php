@@ -36,6 +36,9 @@
         <a href="{{ route('finances.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('finances.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
             <span class="font-medium">Kelola Keuangan</span>
         </a>
+        <a href="{{ route('finance-categories.index') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('finance-categories.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
+            <span class="font-medium ml-4 border-l-2 border-red-300 pl-2 text-sm text-red-100">Kategori Keuangan</span>
+        </a>
         <a href="{{ route('reports.sales') }}" class="flex items-center px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-red-500 shadow-inner' : 'hover:bg-red-600' }}">
             <span class="font-medium">Laporan Penjualan</span>
         </a>
