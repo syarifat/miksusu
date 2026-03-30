@@ -245,12 +245,12 @@
           paymentMethod: '',
           deliveryMethod: '',
           adminList: [
-              { nama: 'Admin 1 - Sari', wa: '6289617377022' },
-              { nama: 'Admin 2 - Dewi', wa: '6281234567891' },
-              { nama: 'Admin 3 - Rina', wa: '6281234567892' },
-              { nama: 'Admin 4 - Ayu', wa: '6281234567893' },
-              { nama: 'Admin 5 - Fitri', wa: '6281234567894' },
-              { nama: 'Admin 6 - Lina', wa: '6281234567895' },
+              { nama: 'Admin Hukma', wa: '6289617377022' },
+              { nama: 'Admin Ayun', wa: '6283857215627' },
+              { nama: 'Admin Herjun', wa: '6285854703338' },
+              { nama: 'Admin Azizah', wa: '62895395657213' },
+              { nama: 'Admin Dimas', wa: '62881011340460' },
+              { nama: 'Admin Gesang', wa: '6281234567895' },
           ],
 
           formatRupiah(angka) {
@@ -310,7 +310,7 @@
                   return;
               }
 
-              let payLabel = this.paymentMethod === 'qris' ? 'QRIS' : 'Cash';
+              let payLabel = {'cash': 'Cash', 'qris': 'QRIS', 'transfer': 'Transfer Bank'}[this.paymentMethod];
               let delivLabel = {'cod': 'COD (Bayar di Tempat)', 'ambil': 'Ambil di Tempat', 'antar': 'Antar ke Rumah'}[this.deliveryMethod];
 
               let text = `Halo Admin *Miksusu*! \nSaya *${this.customerName}* mau pesan:\n\n`;
@@ -800,16 +800,21 @@
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-2.5">💳 Metode Pembayaran</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button @click="paymentMethod = 'qris'" type="button"
-                                    :class="paymentMethod === 'qris' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
-                                    class="px-4 py-3.5 rounded-xl border-2 font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer">
-                                <span class="text-lg">📲</span> <span>QRIS</span>
-                            </button>
+                        <div class="grid grid-cols-3 gap-2">
                             <button @click="paymentMethod = 'cash'" type="button"
                                     :class="paymentMethod === 'cash' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
-                                    class="px-4 py-3.5 rounded-xl border-2 font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                    class="px-3 py-3.5 rounded-xl border-2 font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-sm">
                                 <span class="text-lg">💵</span> <span>Cash</span>
+                            </button>
+                            <button @click="paymentMethod = 'qris'" type="button"
+                                    :class="paymentMethod === 'qris' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                    class="px-3 py-3.5 rounded-xl border-2 font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-sm">
+                                <span class="text-lg">📲</span> <span>QRIS</span>
+                            </button>
+                            <button @click="paymentMethod = 'transfer'" type="button"
+                                    :class="paymentMethod === 'transfer' ? 'border-red-500 bg-red-50 ring-2 ring-red-200 text-red-700' : 'border-gray-200 bg-white text-gray-700 hover:border-red-300 hover:bg-red-50/50'"
+                                    class="px-3 py-3.5 rounded-xl border-2 font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-sm">
+                                <span class="text-lg">🏦</span> <span>Transfer</span>
                             </button>
                         </div>
                     </div>
