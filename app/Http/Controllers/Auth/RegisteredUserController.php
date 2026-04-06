@@ -40,6 +40,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'username' => $request->username, // Ganti email ke username
             'password' => Hash::make($request->password),
+            'role' => 'kasir',
         ]);
 
         event(new Registered($user));
