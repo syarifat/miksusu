@@ -5,6 +5,12 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+// Normalize Vercel Serverless environment so Laravel recognizes root base path
+// Prevents Symfony from stripping '/api' from URLs because the function is in api/index.php
+$_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/../public/index.php';
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
+
 // Setup writable storage directory in /tmp for Vercel Serverless environment
 $storageDirs = [
     '/tmp/storage/framework/views',
