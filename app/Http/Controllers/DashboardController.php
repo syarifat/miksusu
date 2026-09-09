@@ -16,20 +16,23 @@ class DashboardController extends Controller
             return redirect()->route('pos.index');
         }
 
-        $hariIni = Carbon::today();
+        $startOfDay = Carbon::today()->startOfDay();
 
         // 1. Ambil Lapak yang statusnya masih 'aktif'
         $lapakAktif = Stall::where('status', 'aktif')->get();
 
-        // 2. Hitung omzet khusus hari ini (dari tabel transaksi POS)
-        $omzetHariIni = Transaction::whereDate('created_at', $hariIni)->sum('total_harga');
+        // 2. Hitung omzet khusus hari ini (menggunakan index created_at)
+        $omzetHariIni = Transaction::where('created_at', '>=', $startOfDay)->sum('total_harga');
 
-        // 3. Hitung Saldo Kas Keseluruhan (Pemasukan - Pengeluaran)
-        $pemasukan = Finance::where('tipe', 'pemasukan')->sum('nominal');
-        $pengeluaran = Finance::where('tipe', 'pengeluaran')->sum('nominal');
-        $saldoKas = $pemasukan - $pengeluaran;
+        // 3. Hitung Saldo Kas Keseluruhan dalam 1 query agregat tunggal
+        $financeSummary = Finance::selectRaw("
+            SUM(CASE WHEN tipe = 'pemasukan' THEN nominal ELSE 0 END) as total_pemasukan,
+            SUM(CASE WHEN tipe = 'pengeluaran' THEN nominal ELSE 0 END) as total_pengeluaran
+        ")->first();
 
-        // 4. Ambil 5 Transaksi terakhir untuk mini-history
+        $saldoKas = ($financeSummary->total_pemasukan ?? 0) - ($financeSummary->total_pengeluaran ?? 0);
+
+        // 4. Ambil 5 Transaksi terakhir untuk mini-history (eager load stall)
         $transaksiTerbaru = Transaction::with('stall')->latest()->take(5)->get();
 
         return view('dashboard', compact('lapakAktif', 'omzetHariIni', 'saldoKas', 'transaksiTerbaru'));

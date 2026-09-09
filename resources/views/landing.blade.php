@@ -242,6 +242,7 @@
             isCartOpen: false,
             isCheckoutOpen: false,
             customerName: '',
+            website_hp: '',
             selectedAdmin: '',
             paymentMethod: '',
             deliveryMethod: '',
@@ -338,6 +339,7 @@
                     },
                     body: JSON.stringify({
                         nama_pelanggan: self.customerName,
+                        website_hp: self.website_hp,
                         admin_nama: adminInfo ? adminInfo.nama : 'Admin',
                         admin_wa: self.selectedAdmin,
                         metode_pembayaran: self.paymentMethod,
@@ -774,6 +776,7 @@
                                     <input type="text" id="customerName" x-model="customerName" placeholder="Panggil kamu siapa nih? 😊"
                                            class="w-full border-red-200 rounded-xl focus:ring-2 focus:ring-red-200 focus:border-red-400 bg-red-50/30 px-4 py-3.5 text-base font-medium placeholder-red-300"
                                            :class="{'border-red-300 ring-2 ring-red-100': cart.length > 0 && customerName.trim() === ''}">
+                                    <input type="text" x-model="website_hp" name="website_hp" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" tabindex="-1" autocomplete="off">
                                 </div>
 
                                 <div class="flex justify-between items-end text-base font-medium text-gray-900 mb-5">

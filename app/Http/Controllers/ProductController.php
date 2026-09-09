@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -35,6 +36,7 @@ class ProductController extends Controller
         }
 
         $product = Product::create($data);
+        Cache::forget('landing_products');
 
         ActivityLogger::log('create', 'produk', 'Menambahkan produk baru: ' . $product->nama, null, $product->toArray());
 
@@ -67,6 +69,7 @@ class ProductController extends Controller
         }
 
         $product->update($data);
+        Cache::forget('landing_products');
 
         ActivityLogger::log('update', 'produk', 'Mengupdate produk: ' . $product->nama, $dataLama, $product->fresh()->toArray());
 
@@ -83,6 +86,7 @@ class ProductController extends Controller
         }
         
         $product->delete();
+        Cache::forget('landing_products');
 
         ActivityLogger::log('delete', 'produk', 'Menghapus produk: ' . $dataLama['nama'], $dataLama);
 

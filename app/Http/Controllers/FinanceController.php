@@ -12,12 +12,17 @@ class FinanceController extends Controller
 {
     public function index()
     {
-        $finances = Finance::orderBy('tanggal_transaksi', 'desc')->latest()->get();
-        
-        // Hitung rekapitulasi simpel
-        $totalPemasukan = $finances->where('tipe', 'pemasukan')->sum('nominal');
-        $totalPengeluaran = $finances->where('tipe', 'pengeluaran')->sum('nominal');
+        // Hitung rekapitulasi langsung via agregat database tunggal
+        $summary = Finance::selectRaw("
+            SUM(CASE WHEN tipe = 'pemasukan' THEN nominal ELSE 0 END) as total_pemasukan,
+            SUM(CASE WHEN tipe = 'pengeluaran' THEN nominal ELSE 0 END) as total_pengeluaran
+        ")->first();
+
+        $totalPemasukan = $summary->total_pemasukan ?? 0;
+        $totalPengeluaran = $summary->total_pengeluaran ?? 0;
         $saldo = $totalPemasukan - $totalPengeluaran;
+
+        $finances = Finance::orderBy('tanggal_transaksi', 'desc')->latest()->paginate(25);
 
         return view('finances.index', compact('finances', 'totalPemasukan', 'totalPengeluaran', 'saldo'));
     }

@@ -21,12 +21,12 @@ class ActivityLogController extends Controller
             $query->where('aksi', $request->aksi);
         }
 
-        // Filter by tanggal
+        // Filter by tanggal (index-friendly range)
         if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
+            $query->where('created_at', '>=', \Carbon\Carbon::parse($request->start_date)->startOfDay());
         }
         if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
+            $query->where('created_at', '<=', \Carbon\Carbon::parse($request->end_date)->endOfDay());
         }
 
         // Filter by search keyword

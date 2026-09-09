@@ -75,5 +75,10 @@
                 @endforelse
             </tbody>
         </table>
+        @if($finances->hasPages())
+        <div class="p-4 border-t border-gray-100">
+            {{ $finances->links() }}
+        </div>
+        @endif
     </div>
 </x-app-layout>

@@ -1,2 +1,21 @@
 User-agent: *
-Disallow:
+Disallow: /pos
+Disallow: /pos/*
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /api/
+Disallow: /activity-logs
+Disallow: /stalls
+Disallow: /products
+Disallow: /finances
+Disallow: /reports
+Disallow: /preorders
+Disallow: /profile
+
+Allow: /
+Allow: /build/
+Allow: /storage/

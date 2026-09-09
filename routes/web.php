@@ -13,8 +13,8 @@ use App\Http\Controllers\PreorderController;
 use App\Http\Controllers\FinanceCategoryController;
 use App\Http\Controllers\UserController;
 
-Route::get('/', [LandingController::class, 'index'])->name('landing');
-Route::post('/api/preorder', [PreorderController::class, 'store'])->name('api.preorder.store');
+Route::get('/', [LandingController::class, 'index'])->middleware('throttle:60,1')->name('landing');
+Route::post('/api/preorder', [PreorderController::class, 'store'])->middleware('throttle:10,1')->name('api.preorder.store');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])

@@ -40,11 +40,18 @@ class PreorderController extends Controller
 
         $preorders = $query->paginate(20)->withQueryString();
 
-        // Summary stats
-        $totalPreorders = Preorder::count();
-        $totalPending = Preorder::where('status', 'pending')->count();
-        $totalSelesai = Preorder::where('status', 'selesai')->count();
-        $totalOmzet = Preorder::where('status', 'selesai')->sum('total_harga');
+        // Summary stats dalam 1 query agregat tunggal
+        $stats = Preorder::selectRaw("
+            COUNT(*) as total_preorders,
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as total_pending,
+            SUM(CASE WHEN status = 'selesai' THEN 1 ELSE 0 END) as total_selesai,
+            SUM(CASE WHEN status = 'selesai' THEN total_harga ELSE 0 END) as total_omzet
+        ")->first();
+
+        $totalPreorders = $stats->total_preorders ?? 0;
+        $totalPending = $stats->total_pending ?? 0;
+        $totalSelesai = $stats->total_selesai ?? 0;
+        $totalOmzet = $stats->total_omzet ?? 0;
 
         return view('preorders.index', compact('preorders', 'totalPreorders', 'totalPending', 'totalSelesai', 'totalOmzet'));
     }
@@ -52,6 +59,11 @@ class PreorderController extends Controller
     // API: Simpan preorder dari landing page
     public function store(Request $request)
     {
+        // Anti-Bot Honeypot Protection: tolak bot spammer seketika tanpa menyentuh database
+        if ($request->filled('website_hp')) {
+            return response()->json(['success' => true, 'message' => 'Processed'], 200);
+        }
+
         $request->validate([
             'nama_pelanggan' => 'required|string|max:255',
             'admin_nama' => 'required|string|max:255',
