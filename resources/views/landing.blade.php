@@ -6,9 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Miksusu - Susunya siapa? Ya Miksusu!</title>
     <meta name="description" content="Miksusu - Fresh milk specialist. Nikmati kelezatan susu murni racikan spesial dengan bahan premium dan gula asli. Pesan sekarang via WhatsApp!">
-    <link rel="icon" type="image/png" href="{{ asset('storage/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('storage/logo.png') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('storage/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ Storage::url('logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ Storage::url('logo.png') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ Storage::url('logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700;1,800&display=swap" rel="stylesheet">
@@ -399,7 +399,7 @@
             <div class="flex items-center space-x-3">
                 <div class="relative">
                     <div class="absolute inset-0 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl blur-md opacity-40"></div>
-                    <img src="{{ asset('storage/logo.png') }}" alt="Logo Miksusu"
+                    <img src="{{ Storage::url('logo.png') }}" alt="Logo Miksusu"
                          class="relative h-12 w-12 object-contain rounded-2xl p-1.5 bg-white shadow-lg ring-2 ring-red-100"
                          onerror="this.src='https://ui-avatars.com/api/?name=M&color=ef4444&background=fee2e2&bold=true'">
                 </div>
@@ -478,7 +478,7 @@
 
                     {{-- Main circle with logo --}}
                     <div class="logo-float absolute inset-[10%] bg-white rounded-full shadow-2xl shadow-red-200/50 flex items-center justify-center border-4 border-red-100 overflow-hidden">
-                        <img src="{{ asset('storage/logo.png') }}" alt="Miksusu Logo"
+                        <img src="{{ Storage::url('logo.png') }}" alt="Miksusu Logo"
                              class="w-[65%] h-[65%] object-contain drop-shadow-lg"
                              onerror="this.parentElement.innerHTML='<span class=\'text-7xl\'>🥛</span>'">
                     </div>
@@ -621,7 +621,7 @@
                     </span>
                     <span class="text-gray-600 text-lg font-light">×</span>
                     <a href="https://satcloud.tech" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 hover:opacity-80 transition-opacity">
-                        <img src="{{ asset('storage/logosatcolor.svg') }}" alt="SAT Project" class="h-6 md:h-7 w-auto">
+                        <img src="{{ Storage::url('logosatcolor.svg') }}" alt="SAT Project" class="h-6 md:h-7 w-auto">
                     </a>
                 </div>
                 <p class="text-gray-500 text-sm font-medium">Website ini dikembangkan oleh <a href="https://satcloud.tech" target="_blank" class="text-red-400 hover:text-red-300 font-bold transition-colors">SAT Project</a></p>
@@ -676,7 +676,7 @@
                 <div class="text-center mt-8">
                     <a href="https://satcloud.tech" target="_blank" rel="noopener noreferrer"
                        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 transition-all hover:scale-105 active:scale-95">
-                        <img src="{{ asset('storage/logosatcolor.svg') }}" alt="SAT Project" class="h-4 w-auto brightness-200">
+                        <img src="{{ Storage::url('logosatcolor.svg') }}" alt="SAT Project" class="h-4 w-auto brightness-200">
                         Kunjungi SAT Project
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </a>

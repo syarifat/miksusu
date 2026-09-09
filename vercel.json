@@ -23,6 +23,10 @@
       "dest": "/robots.txt"
     },
     {
+      "src": "/storage/(.*)",
+      "dest": "https://mediamiksusu.satcloud.tech/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/api/index.php"
     }
