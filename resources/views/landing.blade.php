@@ -330,7 +330,7 @@
                 let csrfToken = document.querySelector('meta[name="csrf-token"]').content;
                 let self = this;
 
-                fetch('/api/preorder', {
+                fetch('{{ route('api.preorder.store') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
