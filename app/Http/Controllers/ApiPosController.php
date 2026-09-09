@@ -29,15 +29,19 @@ class ApiPosController extends Controller
             ], 401);
         }
 
-        if ($user->role !== 'kasir') {
+        if (!in_array($user->role, ['kasir', 'admin'])) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Hanya Kasir yang dapat login ke aplikasi mobile POS.'
+                'message' => 'Role Anda tidak memiliki akses ke aplikasi mobile POS.'
             ], 403);
         }
 
         // Generate Token via Sanctum
         $token = $user->createToken('mobile-pos-token')->plainTextToken;
+
+        $stalls = $user->role === 'admin'
+            ? \App\Models\Stall::where('status', 'aktif')->select('stalls.id', 'tempat')->get()
+            : $user->stalls()->where('status', 'aktif')->select('stalls.id', 'tempat')->get();
 
         return response()->json([
             'status' => 'success',
@@ -49,8 +53,8 @@ class ApiPosController extends Controller
                 'username' => $user->username,
                 'role' => $user->role
             ],
-            // Opsional: Kirim daftar lapak yang ditugaskan biar HP langsung tau
-            'stalls' => $user->stalls()->where('status', 'aktif')->select('stalls.id', 'tempat')->get()
+            // Kirim daftar lapak yang ditugaskan (atau semua lapak aktif jika admin)
+            'stalls' => $stalls
         ], 200);
     }
     public function sync(Request $request)
@@ -135,8 +139,12 @@ class ApiPosController extends Controller
         // Ambil data user yang sedang request (Kasir)
         $user = $request->user();
 
-        // Ambil lapak yang ditugaskan ke kasir ini beserta stok produknya
-        $stalls = $user->stalls()->where('status', 'aktif')->with(['stallProducts' => function($query) {
+        // Ambil lapak yang ditugaskan ke kasir ini (atau semua lapak aktif jika admin)
+        $query = $user->role === 'admin'
+            ? \App\Models\Stall::where('status', 'aktif')
+            : $user->stalls()->where('status', 'aktif');
+
+        $stalls = $query->with(['stallProducts' => function($query) {
             $query->where('stok_sisa', '>', 0)->with('product');
         }])->get();
 
