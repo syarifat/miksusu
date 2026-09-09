@@ -28,9 +28,10 @@ class ProductController extends Controller
         ]);
 
         $data = $request->only(['nama', 'harga_saat_ini']);
+        $disk = config('filesystems.default');
 
         if ($request->hasFile('foto')) {
-            $data['foto_url'] = $request->file('foto')->store('products', 'public');
+            $data['foto_url'] = $request->file('foto')->store('products', $disk);
         }
 
         $product = Product::create($data);
@@ -55,13 +56,14 @@ class ProductController extends Controller
 
         $dataLama = $product->toArray();
         $data = $request->only(['nama', 'harga_saat_ini']);
+        $disk = config('filesystems.default');
 
         if ($request->hasFile('foto')) {
             // Hapus foto lama jika ada
-            if ($product->foto_url && Storage::disk('public')->exists($product->foto_url)) {
-                Storage::disk('public')->delete($product->foto_url);
+            if ($product->foto_url && Storage::disk($disk)->exists($product->foto_url)) {
+                Storage::disk($disk)->delete($product->foto_url);
             }
-            $data['foto_url'] = $request->file('foto')->store('products', 'public');
+            $data['foto_url'] = $request->file('foto')->store('products', $disk);
         }
 
         $product->update($data);
@@ -74,9 +76,10 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $dataLama = $product->toArray();
+        $disk = config('filesystems.default');
 
-        if ($product->foto_url && Storage::disk('public')->exists($product->foto_url)) {
-            Storage::disk('public')->delete($product->foto_url);
+        if ($product->foto_url && Storage::disk($disk)->exists($product->foto_url)) {
+            Storage::disk($disk)->delete($product->foto_url);
         }
         
         $product->delete();

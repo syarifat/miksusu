@@ -66,7 +66,7 @@
                         <div class="flex items-center justify-between p-4 border-2 {{ $sp->stok_sisa > 0 ? 'border-gray-50 bg-gray-50' : 'border-gray-100 bg-white opacity-50' }} rounded-2xl transition-all">
                             <div class="flex items-center space-x-4">
                                 @if($sp->product->foto_url)
-                                    <img src="{{ asset('storage/' . $sp->product->foto_url) }}" class="w-16 h-16 rounded-xl object-cover shadow-sm">
+                                    <img src="{{ $sp->product->image_url }}" class="w-16 h-16 rounded-xl object-cover shadow-sm">
                                 @else
                                     <div class="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center text-[10px] text-gray-400 font-bold uppercase">No Foto</div>
                                 @endif

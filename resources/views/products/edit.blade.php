@@ -20,7 +20,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Foto Produk</label>
                 @if($product->foto_url)
                     <div class="mb-2">
-                        <img src="{{ asset('storage/' . $product->foto_url) }}" class="w-24 h-24 object-cover rounded-lg border">
+                        <img src="{{ $product->image_url }}" class="w-24 h-24 object-cover rounded-lg border">
                     </div>
                 @endif
                 <input type="file" name="foto" accept="image/*" class="w-full border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">

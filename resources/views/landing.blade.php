@@ -515,7 +515,7 @@
             <div class="glass-card rounded-3xl overflow-hidden flex flex-col group">
                 <div class="h-44 md:h-52 bg-gradient-to-br from-red-50 to-orange-50 relative img-shine">
                     @if($item->foto_url)
-                        <img src="{{ asset('storage/' . $item->foto_url) }}" alt="{{ $item->nama }}"
+                        <img src="{{ $item->image_url }}" alt="{{ $item->nama }}"
                              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     @else
                         <div class="w-full h-full flex flex-col items-center justify-center text-red-300 p-4">
@@ -540,7 +540,7 @@
                     <div class="mt-auto pt-3 border-t border-red-100/50 h-[48px] flex items-center justify-end">
 
                         <button x-show="getItemQty({{ $item->id }}) === 0"
-                                @click="addToCart({{ $item->id }}, '{{ addslashes($item->nama) }}', {{ $item->harga_saat_ini }}, '{{ $item->foto_url ? asset('storage/'.$item->foto_url) : '' }}')"
+                                @click="addToCart({{ $item->id }}, '{{ addslashes($item->nama) }}', {{ $item->harga_saat_ini }}, '{{ $item->image_url }}')"
                                 class="btn-add w-full py-2.5 text-white rounded-xl font-bold text-xs md:text-sm flex items-center justify-center gap-1.5 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             Tambah
@@ -553,7 +553,7 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M20 12H4"></path></svg>
                             </button>
                             <span class="font-extrabold text-red-600 text-base flex-1 text-center" x-text="getItemQty({{ $item->id }})"></span>
-                            <button @click="addToCart({{ $item->id }}, '{{ addslashes($item->nama) }}', {{ $item->harga_saat_ini }}, '{{ $item->foto_url ? asset('storage/'.$item->foto_url) : '' }}')"
+                            <button @click="addToCart({{ $item->id }}, '{{ addslashes($item->nama) }}', {{ $item->harga_saat_ini }}, '{{ $item->image_url }}')"
                                     class="h-full px-4 text-white bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 font-black transition-all active:scale-90 flex items-center justify-center cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
                             </button>

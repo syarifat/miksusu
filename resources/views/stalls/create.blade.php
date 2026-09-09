@@ -41,7 +41,7 @@
                     <div class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
                         <div class="flex items-center space-x-3">
                             @if($product->foto_url)
-                                <img src="{{ asset('storage/' . $product->foto_url) }}" class="w-10 h-10 rounded-md object-cover">
+                                <img src="{{ $product->image_url }}" class="w-10 h-10 rounded-md object-cover">
                             @else
                                 <div class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center text-xs text-gray-500">No Img</div>
                             @endif

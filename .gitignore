@@ -23,3 +23,5 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /mobile_pos
+/backup
+tidb-conf.txt

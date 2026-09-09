@@ -21,7 +21,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center space-x-4">
             <div class="w-16 h-16 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
                 @if($item->foto_url)
-                    <img src="{{ asset('storage/' . $item->foto_url) }}" alt="{{ $item->nama }}" class="w-full h-full object-cover">
+                    <img src="{{ $item->image_url }}" alt="{{ $item->nama }}" class="w-full h-full object-cover">
                 @else
                     <div class="w-full h-full flex items-center justify-center text-gray-400">No Img</div>
                 @endif
@@ -56,7 +56,7 @@
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 w-20">
                         @if($item->foto_url)
-                            <img src="{{ asset('storage/' . $item->foto_url) }}" alt="Foto" class="w-12 h-12 rounded-lg object-cover border">
+                            <img src="{{ $item->image_url }}" alt="Foto" class="w-12 h-12 rounded-lg object-cover border">
                         @else
                             <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-xs text-gray-400 border">Kosong</div>
                         @endif
